@@ -20,22 +20,44 @@ public class XmlHandler extends DefaultHandler {
     @Override
     public void startElement(String uri, String localName, String qName,
                              Attributes attributes) throws SAXException {
-        //System.out.println("Start element:" + qName);
+        System.out.println("Start element:" + qName);
 
         // Handle the order qName
+        if (qName.equals("order")){
+        String orderNumber= attributes.getValue("orderNumber");
+        currentOrder=new Order(orderNumber, dummyAccount);
 
+        }
         // Handle the product qName
+        if (qName.equals("product")){
+            String name=attributes.getValue("name");
+            String isbn=attributes.getValue("isbn");
+            String price= attributes.getValue("unitPrice");
+            String type= attributes.getValue("taxable");
+
+            // Determine type of product (taxable vs. nontaxable)
+            if (attributes.getValue("taxable") !=null && type.contentEquals("true")){
+                currentProduct=new TaxableProduct(name, isbn, Double.parseDouble(price));
+            }else {
+                currentProduct=new NonTaxableProduct(name, isbn, Double.parseDouble(price));
+            }
+        }
     }
 
     @Override
     public void endElement(String uri, String localName, String qName) throws SAXException {
-        //System.out.println("End element:" + qName);
+        System.out.println("End element:" + qName);
 
         // Handle the order qName
-        // Enqueue the current order  to the orders queue
-
-        // Handle the product qName
-        // Push the current product to the products stack
+        if (qName.equals("order")) {
+            // Enqueue the current order  to the orders queue
+            orders.enqueue(currentOrder);
+        }
+            // Handle the product qName
+            if (qName.equals("product")) {
+                // Push the current product to the products stack
+               products.push(currentProduct);
+            }
     }
 
     // Return a reference to the order queue
@@ -43,7 +65,7 @@ public class XmlHandler extends DefaultHandler {
         return orders;
     }
 
-    // Retur a reference to the product stack
+    // Return a reference to the product stack
     public ProductStack getProducts() {
         return products;
     }

@@ -1,7 +1,20 @@
 package stackqueue;
 
+// Use this class from the "interfaces" assignment
 public class CommercialAccount extends Account {
 
-  // Use from the "interfaces" assignment
+    private String taxId;
 
+    // Constructor
+    public CommercialAccount(String accountNumber, Customer customer, String taxId) {
+        // Initialize parent variables
+        super(accountNumber, customer);
+        // Initialize tax id
+        this.taxId = taxId;
+    }
+
+    public String getTaxId(){
+        return this.taxId;
+    }
 }
+
